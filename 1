@@ -1,0 +1,125 @@
+/*------------------------------------------------|
+  The following is the code for Group 12 project
+  This code is for a security system.
+  Author: Ronald Villagomez    Date: --/--/2020
+  |--------------------------------------------------*/
+const int buzzer = 2;
+const int redLED = 3;
+const int greenLED = 4;
+const int doorSens = 5;
+const int PIRsens = 6;
+const int solenoid = 7;
+int password = 1234;
+int PIRvalue = 0;
+int PIRstate = 0;
+int doorState = 0;
+int incomingByte = 0;
+
+void setup() { // Setting pins to output/input
+
+  pinMode(buzzer, OUTPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(doorSens, INPUT_PULLUP); // PULLUP internal resistor is used because external resistor is not sufficient.
+  pinMode(PIRsens, INPUT);
+  pinMode(solenoid, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() { //Main function of code
+if {face_detect == TRUE}{
+  if (authorised_entry == TRUE){
+    //start timer
+    // store and capture image of face
+    
+  }
+}
+}
+
+
+
+
+
+
+
+
+
+void checkPassword(void) {
+
+  if (Serial.available() > 0) {
+    // read the incoming byte:
+    incomingByte = Serial.read() - '0';
+    Serial.flush();
+    delay(5);
+    // say what you got:
+    Serial.print("I received: ");
+    delay(5);
+    Serial.println(incomingByte);
+    if (incomingByte == password) {
+      Serial.println("success");
+    }
+    if (incomingByte != password) {
+      Serial.println("falure");
+    }
+  }
+
+}
+
+void detectMotion(void) {
+  PIRvalue = digitalRead(PIRsens);
+  if (PIRvalue == HIGH) {
+    digitalWrite(redLED, HIGH);
+    if (PIRstate == LOW) {
+      Serial.println("Motion detected!");
+      PIRstate = HIGH;
+    }
+  } else {
+    digitalWrite(redLED, LOW);
+    if (PIRstate == HIGH) {
+      Serial.println("Motion ended!");
+      PIRstate = LOW;
+    }
+  }
+}
+
+
+void ToggleDoor(void) { // function to toggle door
+  if (digitalRead(doorSens) == HIGH) {
+    Serial.println("The door is now being closed");
+    digitalWrite(solenoid, HIGH);
+    doorState = 0;
+  }
+  if (digitalRead(doorSens) == LOW) {
+    Serial.println("The door is now being opened");
+    digitalWrite(solenoid, LOW);
+    doorState = 1;
+  }
+}
+
+
+void sendReport(void) {
+  Serial.println("The authorities are being alerted.");
+  testOutput(buzzer);
+}
+
+
+
+void testOutput(int pinName) { // Function to test output pin. Does not work with buzzer.
+  digitalWrite(pinName, HIGH);
+  delay(500);
+  digitalWrite(pinName, LOW);
+  delay(500);
+  digitalWrite(pinName, HIGH);
+  delay(500);
+  digitalWrite(pinName, LOW);
+  delay(500);
+}
+
+void testInput(int pinName) { // Function to test input pin. Function only works when input is set to INPUT_PULLUP
+  if (digitalRead(pinName) == HIGH) {
+    testOutput(redLED);
+  }
+  if (digitalRead(pinName) == HIGH) {
+    testOutput(greenLED);
+  }
+}
